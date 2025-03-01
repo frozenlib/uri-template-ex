@@ -1,0 +1,26 @@
+[package]
+name = "uri-template-ex"
+version = "0.0.1"
+edition = "2024"
+authors = ["frozenlib"]
+description = "RFC6570 URI Template Level 2 implementation"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/frozenlib/uri-template-ex"
+readme = "README.md"
+keywords = ["uri", "url", "template", "rfc6570", "matching"]
+categories = ["web-programming"]
+include = [
+    "/src/**",
+    "/examples/**",
+    "/tests/**",
+    "/README.md",
+    "/README.*.md",
+    "/LICENSE*",
+]
+
+[dependencies]
+regex = "1.11.1"
+regex-syntax = "0.8.5"
+parse-display = "0.10.0"
+serde_json = "1.0.140"
+serde = { version = "1.0.218", features = ["derive"] }
