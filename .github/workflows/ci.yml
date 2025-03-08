@@ -11,6 +11,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: recursive
       - name: Rustup update stable
         run: rustup update stable
       - name: Show cargo version
