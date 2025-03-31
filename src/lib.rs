@@ -3,6 +3,7 @@ use regex::{Regex, escape};
 use std::fmt::Write;
 use std::ops::Range;
 use std::str::{self, CharIndices};
+use std::sync::LazyLock;
 use std::{borrow::Cow, fmt};
 
 mod vars;
@@ -442,6 +443,15 @@ pub struct Captures<'a> {
 }
 
 impl Captures<'_> {
+    pub fn empty() -> Self {
+        static DUMMY_TEMPLATE: LazyLock<UriTemplate> =
+            LazyLock::new(|| UriTemplate::new("").unwrap());
+        Self {
+            template: &DUMMY_TEMPLATE,
+            ms: Vec::new(),
+        }
+    }
+
     pub fn name(&self, name: &str) -> Option<&Match> {
         for (expr, m) in self.template.exprs.iter().zip(&self.ms) {
             if &self.template.source[expr.var_name_range.clone()] == name {
