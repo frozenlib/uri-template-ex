@@ -29,7 +29,7 @@ Add the following to your Cargo.toml:
 
 ```toml
 [dependencies]
-uri-template-ex = "0.0.1"
+uri-template-ex = "0.0.2"
 ```
 
 ## Usage
