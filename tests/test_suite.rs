@@ -11,8 +11,8 @@ fn load_test_suite(file_name: &str) -> TestSuite {
     path.push(file_name);
 
     let json =
-        fs::read_to_string(path).unwrap_or_else(|e| panic!("Failed to read {}: {}", file_name, e));
-    serde_json::from_str(&json).unwrap_or_else(|e| panic!("Failed to parse {}: {}", file_name, e))
+        fs::read_to_string(path).unwrap_or_else(|e| panic!("Failed to read {file_name}: {e}"));
+    serde_json::from_str(&json).unwrap_or_else(|e| panic!("Failed to parse {file_name}: {e}"))
 }
 
 /// Guess the level from the section name
@@ -56,7 +56,7 @@ fn extract_variable_names(template: &str) -> Vec<String> {
     let mut in_var = false;
     let mut start = 0;
 
-    for (i, c) in template.chars().enumerate() {
+    for (i, c) in template.char_indices() {
         match c {
             '{' => {
                 in_var = true;
@@ -88,7 +88,7 @@ fn check_all_test_suite() {
 
     for file_name in test_files {
         let test_suite = load_test_suite(file_name);
-        println!("Testing {}", file_name);
+        println!("Testing {file_name}");
 
         for (section_name, section) in test_suite.0.iter() {
             // Determine the section level
@@ -100,11 +100,11 @@ fn check_all_test_suite() {
 
             // Skip tests for level 3 and above
             if level > 2 {
-                println!("Skipping {} (level {})", section_name, level);
+                println!("Skipping {section_name} (level {level})");
                 continue;
             }
 
-            println!("  Testing section: {} (level {})", section_name, level);
+            println!("  Testing section: {section_name} (level {level})");
             for test in &section.testcases {
                 let template = match UriTemplate::new(&test.template) {
                     Ok(t) => t,
@@ -290,8 +290,7 @@ mod json_reading_test {
             let test_suite = load_test_suite(file_name);
             assert!(
                 !test_suite.0.is_empty(),
-                "Test suite {} should not be empty",
-                file_name
+                "Test suite {file_name} should not be empty"
             );
 
             for (section_name, section) in test_suite.0.iter() {
@@ -299,43 +298,33 @@ mod json_reading_test {
                 if section.level > 0 {
                     assert!(
                         section.level <= 4,
-                        "Level should be between 1 and 4 in {} section {}",
-                        file_name,
-                        section_name
+                        "Level should be between 1 and 4 in {file_name} section {section_name}"
                     );
                 }
 
                 // Verify variables
                 assert!(
                     !section.variables.is_empty(),
-                    "Variables should not be empty in {} section {}",
-                    file_name,
-                    section_name
+                    "Variables should not be empty in {file_name} section {section_name}"
                 );
 
                 // Verify test cases
                 assert!(
                     !section.testcases.is_empty(),
-                    "Test cases should not be empty in {} section {}",
-                    file_name,
-                    section_name
+                    "Test cases should not be empty in {file_name} section {section_name}"
                 );
 
                 // Verify each test case
                 for test in &section.testcases {
                     assert!(
                         !test.template.is_empty(),
-                        "Template should not be empty in {} section {}",
-                        file_name,
-                        section_name
+                        "Template should not be empty in {file_name} section {section_name}"
                     );
 
                     match &test.expected {
                         ExpectedValue::String(s) => assert!(
                             !s.is_empty(),
-                            "Expected string should not be empty in {} section {}",
-                            file_name,
-                            section_name
+                            "Expected string should not be empty in {file_name} section {section_name}"
                         ),
                         ExpectedValue::Bool(_) => {
                             assert_eq!(
@@ -345,9 +334,7 @@ mod json_reading_test {
                         }
                         ExpectedValue::Array(arr) => assert!(
                             !arr.is_empty(),
-                            "Expected array should not be empty in {} section {}",
-                            file_name,
-                            section_name
+                            "Expected array should not be empty in {file_name} section {section_name}"
                         ),
                     }
                 }
