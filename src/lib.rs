@@ -452,7 +452,7 @@ impl Captures<'_> {
         }
     }
 
-    pub fn name(&self, name: &str) -> Option<&Match> {
+    pub fn name(&self, name: &str) -> Option<&Match<'_>> {
         for (expr, m) in self.template.exprs.iter().zip(&self.ms) {
             if &self.template.source[expr.var_name_range.clone()] == name {
                 return m.as_ref();
@@ -460,7 +460,7 @@ impl Captures<'_> {
         }
         None
     }
-    pub fn get(&self, i: usize) -> Option<&Match> {
+    pub fn get(&self, i: usize) -> Option<&Match<'_>> {
         self.ms.get(i)?.as_ref()
     }
     pub fn len(&self) -> usize {
@@ -469,7 +469,7 @@ impl Captures<'_> {
     pub fn is_empty(&self) -> bool {
         self.ms.is_empty()
     }
-    pub fn iter(&self) -> impl Iterator<Item = (&str, Option<&Match>)> {
+    pub fn iter(&self) -> impl Iterator<Item = (&str, Option<&Match<'_>>)> {
         (0..self.ms.len()).map(|i| (self.template.var_name(i), self.get(i)))
     }
 }
@@ -487,7 +487,7 @@ impl<'a> Match<'a> {
     pub fn name(&self) -> &str {
         self.name
     }
-    pub fn value(&self) -> Result<Cow<str>> {
+    pub fn value(&self) -> Result<Cow<'_, str>> {
         match self.op {
             None => Ok(Cow::Owned(decode_str(self.m.as_str(), 0)?)),
             Some(Operator::Reserved | Operator::Fragment) => Ok(Cow::Borrowed(self.source())),

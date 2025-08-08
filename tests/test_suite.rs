@@ -110,11 +110,11 @@ fn check_all_test_suite() {
                     Ok(t) => t,
                     Err(e) => {
                         // For Failure Tests section, errors are expected
-                        if section_name == "Failure Tests" {
-                            if let ExpectedValue::Bool(false) = test.expected {
-                                // If an error is expected and actually occurs, it's a success
-                                continue;
-                            }
+                        if section_name == "Failure Tests"
+                            && let ExpectedValue::Bool(false) = test.expected
+                        {
+                            // If an error is expected and actually occurs, it's a success
+                            continue;
                         }
                         panic!("Failed to parse template '{}': {}", test.template, e);
                     }
