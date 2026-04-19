@@ -62,14 +62,12 @@ fn extract_variable_names(template: &str) -> Vec<String> {
                 in_var = true;
                 start = i + 1;
             }
-            '}' => {
-                if in_var {
-                    let var_part = &template[start..i];
-                    // Remove modifiers (+, #, ., /, ;, ?, &)
-                    let name = var_part.trim_start_matches(|c| "#+.;/?&".contains(c));
-                    names.push(name.to_string());
-                    in_var = false;
-                }
+            '}' if in_var => {
+                let var_part = &template[start..i];
+                // Remove modifiers (+, #, ., /, ;, ?, &)
+                let name = var_part.trim_start_matches(|c| "#+.;/?&".contains(c));
+                names.push(name.to_string());
+                in_var = false;
             }
             _ => {}
         }
